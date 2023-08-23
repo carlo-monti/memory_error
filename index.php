@@ -5,7 +5,7 @@ $pageRequested = $_GET['request'];
 $requestedLength = $_GET['length_of_text'];
 if(isset($pageRequested)){
     $selected_page = $pageRequested;
-    $selected_page_to_show = file_get_contents("./archive/" . $pageRequested); #to remove \n at the end
+    $selected_page_to_show = file_get_contents("./archive/" . $pageRequested);
 }else{
     if(isset($requestedLength)){
         switch($requestedLength){
@@ -61,6 +61,7 @@ if(isset($pageRequested)){
     $contentOfUrn = file_get_contents("./" . $urn_name);
     $contentOfUrn = str_replace($selected_page, '', $contentOfUrn);
     file_put_contents("./" . $urn_name, $contentOfUrn);
+    header("Location: ./index.php?request=" . substr($selected_page,0,-1));
 }
 
 #get title
@@ -108,7 +109,7 @@ body,h1,h2,h3,h4,h5,h6 {font-family: "Lato", sans-serif}
     </span>
     <?php 
         if($subtitle){
-            //echo '<p class="w3-xlarge">' . $subtitle . '</p>';
+            echo '<p class="w3-xlarge">' . $subtitle . '</p>';
         }
     ?>
   </h1>
@@ -158,6 +159,10 @@ body,h1,h2,h3,h4,h5,h6 {font-family: "Lato", sans-serif}
     <button type="button" onclick="location.href='./delete.php?page=<?php echo $selected_page; ?>'">Delete</button>
     <br>
     <p><?php echo $selected_page; ?></p>
+    <button type="button" onclick="insert_into_textarea('<h1>')">h1</button>
+    <button type="button" onclick="insert_into_textarea('</h1>')">/h1</button>
+    <button type="button" onclick="insert_into_textarea('<p>')">p</button>
+    <button type="button" onclick="insert_into_textarea('</p>')">/p</button>
     <form action="./edit_html.php" name="confirmationForm" method="post">
         <input type="hidden" id="page" name="page" value="<?php echo $selected_page ?>">
         <textarea id="plain_html" class="text" cols="86" rows ="20" name="plain_html" accept-charset="utf-8">
@@ -182,6 +187,14 @@ function myFunction() {
   } else { 
     x.className = x.className.replace(" w3-show", "");
   }
+}
+
+function insert_into_textarea(text){
+    textarea = document.getElementById("plain_html");
+    cursor_pos = textarea.selectionStart;
+    content = textarea.value;
+    new_content = content.substring(0,cursor_pos) + text + content.substring(cursor_pos);
+    textarea.value = new_content;
 }
 
 var color = 0;
